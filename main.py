@@ -77,45 +77,39 @@ class MultiConverter:
 
 
 class NumberedTitleConverter(TextConverter):
+    def __init__(self, scope: int = 1):
+        """
+        Initializes the NumberedTitleConverter with a given scope level.
+
+        Parameters:
+        scope (int): The starting level for titles (default is 1).
+        """
+        self.scope = scope
+
     def process_line(self, line: str) -> str:
         """
-        Converts numbered titles into Markdown headers.
+        Converts numbered titles into Markdown headers based on the scope.
 
         Parameters:
         line (str): The input line of text.
 
         Returns:
-        str: The formatted line as a Markdown header (`#`, `##`, or `###`)
-             based on the numeric level, or the original line if not a title.
-
-        Process:
-        1. Cleans the line and counts numeric parts.
-        2. Determines header level based on numeric count:
-           - Level 1: `#` for single-digit titles
-           - Level 2: `##` for double-digit titles
-           - Level 3: `###` for triple-digit titles
-        3. Strips trailing periods.
+        str: The formatted line as a Markdown header with `#` depending on the level and scope.
+             Limits the header level to a maximum of 3. If the calculated level exceeds 3, no header is added.
         """
-        line = self.clean_line(line).replace(
-            ".-", "."
-        )  # Clean line and remove a specific pattern
-        # Count numeric parts
+        line = self.clean_line(line).replace(".-", ".")  # Clean line and remove a specific pattern
         parts = line.split(".")
         numeric_parts = [part for part in parts if part.isdigit()]
         level = len(numeric_parts)  # Count numeric parts
 
-        # Format titles with appropriate Markdown headers based on the numeric level
-        if level > 0 and all(
-            part.isdigit() for part in numeric_parts
-        ):  # Ensure all parts are digits
-            if level == 1:
-                return f"# {line.rstrip('.')}"
-            elif level == 2:
-                return f"## {line.rstrip('.')}"
-            elif level == 3:
-                return f"### {line.rstrip('.')}"
+        # Calculate header level based on scope
+        header_level = level + self.scope - 1
 
-        return line  # If not a title, return as is
+        # Limit the number of '#' to a maximum of 3, else return line without a header
+        if 1 <= header_level <= 3:
+            return f"{'#' * header_level} {line.rstrip('.')}"
+        else:
+            return line  # If level exceeds 3, return the original line without a header
 
 
 class ItalicBoldConverter(TextConverter):
@@ -167,8 +161,11 @@ class BulletListConverter(TextConverter):
 input_file = "data/input.txt"
 output_file = "data/output.txt"
 
+# Define the starting scope level for titles
+init_scope = 2
+
 # Create instances of the converters
-converters = [NumberedTitleConverter(), ItalicBoldConverter(), BulletListConverter()]
+converters = [NumberedTitleConverter(scope=init_scope), ItalicBoldConverter(), BulletListConverter()]
 
 # Create a MultiConverter instance to apply all converters
 multi_converter = MultiConverter(converters)

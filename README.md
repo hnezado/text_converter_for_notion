@@ -4,10 +4,12 @@ This Python program is designed to transform text into Markdown format. This pro
 
 ## Features
 
-- Converts numbered titles to Markdown headers (`#`, `##`, `###`)
-- Converts bullet lists from hyphen (`-`) to Markdown list format (`*`)
-- Cleans up some trailing periods and whitespaces
-- Easily extendable for future text conversion needs
+- Converts numbered titles to Markdown headers (`#`, `##`, `###`).
+- Configurable header level starting point using the `scope` variable.
+- Limits the number of `#` to a maximum of 3 (if the level is higher, no header is added).
+- Converts bullet lists from hyphen (`-`) to Markdown list format (`*`).
+- Cleans up some trailing periods and whitespaces.
+- Easily extendable for future text conversion needs.
 
 ## Installation
 
@@ -17,12 +19,13 @@ This Python program is designed to transform text into Markdown format. This pro
 ## Usage
 
 1. Add the text you want to convert into the file `data/input.txt`.
-2. Run the main script main.py.
+2. Set the scope variable in the script `main.py` to define the starting header level. For example, setting scope = 2 will start headers at `##` for single-digit titles, `###` for two-digit titles, etc.
+2. Run the main script `main.py`.
 3. The converted output text will be saved in `data/output.txt`.
 
 ### Input Format
 
-This text should contain structured text formatted with numbered titles and bullet lists. For example:
+This text should contain structured text formatted with numbered titles and bullet lists. You can configure from which level the headers will start by setting the `scope` variable. For example:
 
 ```
 1.- Introduction
@@ -40,20 +43,22 @@ This is a *bold* text conversion.
 
 ### Output
 
-The output will format the titles, italic/bold text, and lists appropriately for Notion. For example, the input above would be converted to:
+The output will format the titles, italic/bold text, and lists appropriately for Notion. If you set `init_scope = 2`, the input above would be converted to:
 
 ```
-# 1. Introduction
-# 2. Software Overview
+## 1. Introduction
+## 2. Software Overview
 * Item one
 * Item two
-# 3. Hardware Components
-## 3.1. Motherboard
-## 3.2. CPU
-# 4. Conclusion
+## 3. Hardware Components
+### 3.1. Motherboard
+### 3.2. CPU
+## 4. Conclusion
 This is a _bold_ text conversion
 __Italic__ for emphasis
 ```
+
+If the title level exceeds 3 (e.g., `3.1.1.1`), it will not add any `#` to the title.
 
 ## Code Structure
 
